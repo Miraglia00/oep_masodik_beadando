@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1618130765 source:c:\users\zsolti-laptop\desktop\oep_masodik_beadando\main.cpp
+	<iostream>
+	"FishingEnum.h"
+
+1618131711 source:c:\users\zsolti-laptop\desktop\oep_masodik_beadando\src\fishingenum.cpp
+	"FishingEnum.h"
+	<iostream>
+	<sstream>
+
+1618130993 c:\users\zsolti-laptop\desktop\oep_masodik_beadando\include\fishingenum.h
+	<string>
+	<fstream>
+	<vector>
+
