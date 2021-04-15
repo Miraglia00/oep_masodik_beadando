@@ -9,14 +9,23 @@ void FishingEnum::first(){
     next();
 }
 void FishingEnum::next(){
-     _end = _status == abnorm ? true : false;
-     if(!_end){
-        for (; _status == norm; read()) {
-             //cout << _data._name << _data._comp << endl;
+    _end = _status == abnorm ? true : false;
+    string name = _data._name;
+
+    if(!_end){
+        for (; _status == norm && name == _data._name; read()) {
+            if(_caught){
+                _caught_num++;
+            }
         }
-     }
+        if(_caught_num < 2 && _current){
+            _current = false;
+        }
+
+        _caught_num = 0;
+    }
 }
-bool FishingEnum::current() const{
+int FishingEnum::current() const{
     return _current;
 }
 bool FishingEnum::end() const{
@@ -28,22 +37,27 @@ FishingEnum::Data FishingEnum::getSmallest() const{
 }
 
 void FishingEnum::read(){
-
+    _caught = false;
     _status = _f.fail() ? abnorm : norm;
-
     string fish;
     double weight;
     string line;
     getline(_f, line);
-    cout << "sor:" <<line << endl;
-    istringstream l(line);
+    if(line != ""){
+        istringstream l(line);
 
-    l >> _data._name >> _data._comp;
-    for(l >> fish >> weight; !l.fail(); l >> fish >> weight){
-        if(fish == "Ponty" && weight < _min){
-            _min = weight;
-            _smallest = _data;
+        l >> _data._name >> _data._comp;
+        for(l >> fish >> weight; !l.fail(); l >> fish >> weight){
+            if(fish == "Ponty"){
+                _caught = true;
+            }
+            if(fish == "Ponty" && weight < _min){
+                _min = weight;
+                _smallest = _data;
+            }
         }
+    }else{
+        _status = abnorm;
     }
 }
 
@@ -52,7 +66,13 @@ FishingEnum::FishingEnum(const string &inp)
     _f.open(inp);
     _status = _f.fail() ? abnorm : norm;
 
-    _current = false;
+    if(_status == abnorm) throw "Failed to open file!";
+
+    int c = _f.peek();
+
+    if ( c == 10 ) throw "Empty file!";
+
+    _current = true;
     _end = false;
 
 }

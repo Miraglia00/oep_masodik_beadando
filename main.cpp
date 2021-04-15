@@ -16,15 +16,68 @@ biztos, hogy fogtak pontyot a horgászok!)
 #include <iostream>
 #include "FishingEnum.h"
 
+#define DEBUG
+
+#ifndef DEBUG
+
 using namespace std;
 
 int main()
 {
-    FishingEnum e("inp.txt");
+    try{
+        FishingEnum e("inp.txt");
 
-    for (e.first(); !e.end(); e.next()) {
+        bool c = false;
 
+        for (e.first(); !e.end(); e.next()) {
+           c = e.current();
+        }
+        (e.getSmallest()._name == "" || e.getSmallest()._comp == "") ? cout << "Nobody caught a Ponty!" : cout << e.getSmallest()._name <<"-"<< e.getSmallest()._comp;
+
+        cout << endl;
+
+        (c) ? cout << "Everybody caught Ponty at least twice on different competitions" : cout << "Nobody caught Ponty at least twice on different competitions";
+
+    }catch(char const* err){
+        cout << err << endl;
     }
-    cout << e.getSmallest()._name << e.getSmallest()._comp;
     return 0;
 }
+
+#else
+
+#define CATCH_CONFIG_MAIN
+
+#include "catch.hpp"
+#include "FishingEnum.h"
+
+TEST_CASE("FishingEnum()", "[FishingEnum]"){
+
+    CHECK_NOTHROW(FishingEnum e("inp.txt"));
+
+    CHECK_THROWS(FishingEnum e("notexist.txt"));
+
+    CHECK_THROWS(FishingEnum e("empty.txt"));
+}
+
+TEST_CASE("FishingEnum in action", "[FishingEnum]"){
+
+    FishingEnum e("inp.txt");
+
+    bool c = false;
+
+    for (e.first(); !e.end(); e.next()) {
+       c = e.current();
+    }
+
+    CHECK(e.getSmallest()._name == "PISTABA");
+    CHECK(e.getSmallest()._comp == "Kiliti0512");
+
+    CHECK_FALSE(e.getSmallest()._name == "JANIBA");
+    CHECK_FALSE(e.getSmallest()._comp == "Biliti0512");
+
+    REQUIRE(c == true);
+
+    REQUIRE_FALSE(c == false);
+}
+#endif
